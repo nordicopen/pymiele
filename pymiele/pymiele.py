@@ -12,7 +12,7 @@ from typing import Any
 
 from aiohttp import ClientResponse, ClientResponseError, ClientSession, ClientTimeout
 
-from .const import AIO_TIMEOUT, MIELE_API, VERSION
+from .const import AIO_TIMEOUT, AVAILABLE_LANGUAGES, LANG_EN, MIELE_API, VERSION
 
 CONTENT_TYPE = "application/json"
 USER_AGENT_BASE = f"Pymiele/{VERSION}"
@@ -23,15 +23,34 @@ _LOGGER = logging.getLogger(__name__)
 class MieleAPI:
     """Class to communicate with the Miele API."""
 
-    def __init__(self, auth: AbstractAuth) -> None:
-        """Initialize the API and store the auth so we can make requests."""
+    def __init__(self, auth: AbstractAuth, language: str = LANG_EN) -> None:
+        """Initialize the API and store the auth so we can make requests.
+        Args:
+            auth (AbstractAuth): The authentication object to use for requests.
+            language (str): The language to use for requests, defaults to English.
+        """
         self.auth = auth
+        self._language = LANG_EN
+        self.language = language
+
+    @property
+    def language(self) -> str:
+        """Get the current language."""
+        return self._language
+
+    @language.setter
+    def language(self, value: str) -> None:
+        """Set the language if valid. Must be one of the available languages: da, de, en, es, fr, it, nl, nb."""
+        if value in AVAILABLE_LANGUAGES:
+            self._language = value
 
     async def get_devices(self) -> dict:
         """Get all devices."""
         async with asyncio.timeout(AIO_TIMEOUT):
             res = await self.auth.request(
-                "GET", "/devices", headers={"Accept": "application/json"}
+                "GET", "/devices",
+                headers={"Accept": "application/json"},
+                params={"language": self.language},
             )
             res.raise_for_status()
         return await res.json()
@@ -54,6 +73,7 @@ class MieleAPI:
                 "GET",
                 f"/devices/{serial}/programs",
                 headers={"Accept": "application/json"},
+                params={"language": self.language},
             )
             res.raise_for_status()
         return await res.json()
@@ -165,6 +185,7 @@ class MieleAPI:
                         "Accept": "text/event-stream; char-set=utf-8",
                         "Authorization": f"Bearer {access_token}",
                     },
+                    params={"language": self.language},
                 ) as resp:
                     # _LOGGER.debug("Starting listening for events: %s", resp.status)
                     while True:
