@@ -27,11 +27,12 @@ class MieleAPI:
         """Initialize the API and store the auth so we can make requests."""
         self.auth = auth
 
-    async def get_devices(self) -> dict:
-        """Get all devices."""
+    async def get_devices(self, serial: str | None = None) -> dict:
+        """Get one or all device(s)."""
+        serial_str = "" if serial is None else f"/{serial}"
         async with asyncio.timeout(AIO_TIMEOUT):
             res = await self.auth.request(
-                "GET", "/devices", headers={"Accept": "application/json"}
+                "GET", f"/devices{serial_str}", headers={"Accept": "application/json"}
             )
             res.raise_for_status()
         return await res.json()
@@ -64,6 +65,40 @@ class MieleAPI:
             res = await self.auth.request(
                 "GET",
                 f"/devices/{serial}/rooms",
+                headers={"Accept": "application/json"},
+            )
+            res.raise_for_status()
+        return await res.json()
+
+    async def get_filling_levels(self, serial: str | None = None) -> dict:
+        """Get consumables filling levels for all devices or for a specific device."""
+        serial_str = "" if serial is None else f"/{serial}"
+        async with asyncio.timeout(AIO_TIMEOUT):
+            res = await self.auth.request(
+                "GET",
+                f"/devices{serial_str}/fillingLevels",
+                headers={"Accept": "application/json"},
+            )
+            res.raise_for_status()
+        return await res.json()
+
+    async def get_failure_details(self, serial: str) -> dict:
+        """Get failure details for a device."""
+        async with asyncio.timeout(AIO_TIMEOUT):
+            res = await self.auth.request(
+                "GET",
+                f"/devices/{serial}/failureDetails",
+                headers={"Accept": "application/json"},
+            )
+            res.raise_for_status()
+        return await res.json()
+
+    async def get_camera(self, serial: str) -> dict:
+        """Get camera image for a device."""
+        async with asyncio.timeout(AIO_TIMEOUT):
+            res = await self.auth.request(
+                "GET",
+                f"/devices/{serial}/camera",
                 headers={"Accept": "application/json"},
             )
             res.raise_for_status()
