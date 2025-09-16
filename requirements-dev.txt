@@ -4,7 +4,7 @@ build
 bump2version==1.0.1
 colorlog==6.9.0
 mypy==1.15.0
-pre-commit==4.2.0
+pre-commit==4.3.0
 ruff==0.13.0
 setuptools==78.1.0
 wheel
