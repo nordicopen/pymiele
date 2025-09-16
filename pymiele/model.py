@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 
 class MieleDevices:
     """Data for all devices from API."""
@@ -736,3 +738,115 @@ class MieleProgramAvailable:
         except KeyError:
             ret_val = None
         return ret_val
+
+
+class MieleFillingLevel:
+    """Model for consumables filling levels."""
+
+    def __init__(self, raw_data: dict[str, Any]) -> None:
+        """Initialize MieleFillingLevel."""
+        self.raw_data = raw_data
+
+    @property
+    def raw(self) -> dict[str, Any]:
+        """Return raw data."""
+        return self.raw_data
+
+    @property
+    def twin_dos_container_1_filling_level(self) -> int | None:
+        """Return the fill level of twinDos container 1."""
+        return self.raw_data.get("twinDosContainer1FillingLevel")
+
+    @property
+    def twin_dos_container_2_filling_level(self) -> int | None:
+        """Return the fill level of twinDos container 2."""
+        return self.raw_data.get("twinDosContainer2FillingLevel")
+
+    @property
+    def power_disc_filling_level(self) -> float | None:
+        """Return the fill level of powerDisc."""
+        return self.raw_data.get("powerDiscFillingLevel")
+
+    @property
+    def salt_filling_level(self) -> int | None:
+        """Return the fill level of salt tank."""
+        return self.raw_data.get("saltFillingLevel")
+
+    @property
+    def rinse_aid_filling_level(self) -> int | None:
+        """Return the fill level of rinse aid."""
+        return self.raw_data.get("rinseAidFillingLevel")
+
+    @property
+    def coal_filter_saturation(self) -> int | None:
+        """Return the coal filter saturation."""
+        return self.raw_data.get("coalFilterSaturation")
+
+    @property
+    def fat_filter_saturation(self) -> int | None:
+        """Return the fat filter saturation."""
+        return self.raw_data.get("fatFilterSaturation")
+
+    @property
+    def descaling_counter(self) -> int | None:
+        """Return the descaling counter."""
+        return self.raw_data.get("descalingCounter")
+
+    @property
+    def degreasing_counter(self) -> int | None:
+        """Return the degreasing counter."""
+        return self.raw_data.get("degreasingCounter")
+
+    @property
+    def milk_cleaning_counter(self) -> int | None:
+        """Return the milk cleaning counter."""
+        return self.raw_data.get("milkCleaningCounter")
+
+
+class MieleFillingLevels:
+    """Model for consumables fill levels for multiple devices."""
+
+    def __init__(self, raw_data: dict[str, Any]) -> None:
+        """Initialize MieleFillingLevels."""
+        self.raw_data = raw_data
+
+    @property
+    def raw(self) -> dict[str, Any]:
+        """Return raw data."""
+        return self.raw_data
+
+    @property
+    def filling_levels(self) -> dict[str, MieleFillingLevel]:
+        """Return fill levels."""
+        return {
+            device: MieleFillingLevel(levels["fillingLevels"])
+            for device, levels in self.raw_data.items()
+        }
+
+
+class MieleCamera:
+    """Return camera image data."""
+
+    def __init__(self, raw_data: dict[str, str]) -> None:
+        """Initialize MieleCamera."""
+        self.raw_data = raw_data
+
+    def image(self) -> str | None:
+        """Return encoded image data."""
+        return self.raw_data.get("image")
+
+
+class MieleFailureData:
+    """Return failure data."""
+
+    def __init__(self, raw_data: dict[str, Any]) -> None:
+        """Initialize MieleFailureData."""
+        self.raw_data = raw_data
+
+    def error_number(self) -> int | None:
+        """Return error number."""
+        return self.raw_data.get("error_number")
+
+    def message(self) -> str | None:
+        """Return error message."""
+        return self.raw_data.get("message")
