@@ -5,7 +5,7 @@ VERSION = "0.6.0b0"
 MIELE_API = "https://api.mcs3.miele.com/v1"
 OAUTH2_AUTHORIZE = "https://api.mcs3.miele.com/thirdparty/login"
 OAUTH2_TOKEN = "https://api.mcs3.miele.com/thirdparty/token"
-OAUTH2_SCOPE: set[str] = {}
+OAUTH2_SCOPE: set[str] = set()
 
 # pylint: disable=line-too-long
 MIELE_API_NEW = "https://api.domestic.miele-iot.com/v1"
