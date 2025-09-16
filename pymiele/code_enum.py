@@ -21,13 +21,14 @@ class MieleEnum(IntEnum):
     # - Return 'unknown_value' as key name
 
     @property
-    def name(self) -> str | None:
+    def name(self) -> str | None:  # pylint: disable=E0102, W0236
         """Force to lower case."""
         _name = super().name.lower()
         return _name if _name != "missing2none" else None
 
     @classmethod
     def _missing_(cls, value: object) -> Any | None:
+        """Handle missing enum values."""
         if hasattr(cls, "unknown_code") or hasattr(cls, "unknown"):
             warning = (
                 f"Missing {cls.__name__} code: {value} - defaulting to 'unknown_code'"
@@ -37,10 +38,13 @@ class MieleEnum(IntEnum):
                 _LOGGER.warning(warning)
             return cls.unknown_code  # pylint: disable=no-member
         if hasattr(cls, "missing2none"):
-            warning = f"Missing {cls.__name__} code: {value} - defaulting to Unknown"
-            if warning not in completed_warnings:
-                completed_warnings.add(warning)
-                _LOGGER.warning(warning)
+            if value is not None:
+                warning = (
+                    f"Missing {cls.__name__} code: {value} - defaulting to Unknown"
+                )
+                if warning not in completed_warnings:
+                    completed_warnings.add(warning)
+                    _LOGGER.warning(warning)
             return cls.missing2none  # pylint: disable=no-member
 
         return None
