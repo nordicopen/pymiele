@@ -12,19 +12,31 @@ class MieleEnum(IntEnum):
     """Miele Enum for codes with int values."""
 
     # Modify the behaviour of the class when detecting a missing value:
-    # Add a member missing2none in order to:
+    # Set argument missing_to_none= True when creating the subclass in order to:
     # - Log a warning that the code is missing
     # - Return None as key name
     #
+    # Deprecated variant - can be removed 2025.12
     # Add a member unknown_code in order to:
     # - Log a warning that the code is missing
     # - Return 'unknown_value' as key name
+
+    def __init_subclass__(
+        cls, /, missing_to_none: bool = False, **kwargs: dict[str, Any]
+    ) -> None:
+        """Add default member when setting up the subclass."""
+        super().__init_subclass__(**kwargs)
+        if missing_to_none:
+            self = int.__new__(cls)
+            self._name_ = None  # pylint: disable W0201
+            self._value_ = -9999  # A dummy, never used, code
+            cls._add_member_("missing_to_none", self)
 
     @property
     def name(self) -> str | None:  # pylint: disable=E0102, W0236
         """Force to lower case."""
         _name = super().name.lower()
-        return _name if _name != "missing2none" else None
+        return _name if _name != "missing_to_none" else None
 
     @classmethod
     def _missing_(cls, value: object) -> Any | None:
@@ -37,7 +49,8 @@ class MieleEnum(IntEnum):
                 completed_warnings.add(warning)
                 _LOGGER.warning(warning)
             return cls.unknown_code  # pylint: disable=no-member
-        if hasattr(cls, "missing2none"):
+
+        if hasattr(cls, "missing_to_none"):
             if value is not None:
                 warning = (
                     f"Missing {cls.__name__} code: {value} - defaulting to Unknown"
@@ -45,7 +58,7 @@ class MieleEnum(IntEnum):
                 if warning not in completed_warnings:
                     completed_warnings.add(warning)
                     _LOGGER.warning(warning)
-            return cls.missing2none  # pylint: disable=no-member
+            return cls.missing_to_none  # pylint: disable=no-member
 
         return None
 
