@@ -28,14 +28,14 @@ class MieleEnum(IntEnum):
         super().__init_subclass__(**kwargs)
         if missing_to_none:
             self = int.__new__(cls)
-            self._name_ = None  # pylint: disable W0201
-            self._value_ = -9999  # A dummy, never used, code
+            self._name_ = None  # pylint: disable=W0201
+            self._value_ = -9999  # A dummy code value
             cls._add_member_("missing_to_none", self)
 
     @property
     def name(self) -> str | None:  # pylint: disable=E0102, W0236
         """Force to lower case."""
-        _name = super().name.lower()
+        _name = super().name.lower() if super().name is not None else None
         return _name if _name != "missing_to_none" else None
 
     @classmethod
