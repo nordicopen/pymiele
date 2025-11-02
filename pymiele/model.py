@@ -530,6 +530,11 @@ class MieleAction:
             ret_val = []
         return ret_val
 
+    @modes.setter
+    def modes(self, value: list[int]) -> None:
+        """Set list of modes."""
+        self.raw_data["modes"] = value
+
     @property
     def process_actions(self) -> list[int]:
         """Return list of process actions."""
