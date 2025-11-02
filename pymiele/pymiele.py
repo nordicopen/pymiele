@@ -120,8 +120,8 @@ class MieleAPI:
                     "Accept": "application/json",
                 },
             )
+            _LOGGER.debug("set_target_temperature res: %s", res.status)
             res.raise_for_status()
-        _LOGGER.debug("set_target_temperature res: %s", res.status)
         return res
 
     async def send_action(
@@ -140,8 +140,8 @@ class MieleAPI:
                     "Accept": "application/json",
                 },
             )
+            _LOGGER.debug("send_action res: %s", res.status)
             res.raise_for_status()
-        _LOGGER.debug("send_action res: %s", res.status)
         return res
 
     async def set_program(
@@ -160,8 +160,8 @@ class MieleAPI:
                     "Accept": "application/json",
                 },
             )
+            _LOGGER.debug("set_program res: %s", res.status)
             res.raise_for_status()
-        _LOGGER.debug("set_program res: %s", res.status)
         return res
 
     async def set_room(
@@ -180,8 +180,8 @@ class MieleAPI:
                     "Accept": "application/json",
                 },
             )
+            _LOGGER.debug("set_room res: %s", res.status)
             res.raise_for_status()
-        _LOGGER.debug("set_room res: %s", res.status)
         return res
 
     async def listen_events(
