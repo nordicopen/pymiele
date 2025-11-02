@@ -12,7 +12,7 @@ from typing import Any
 
 from aiohttp import ClientResponse, ClientResponseError, ClientSession, ClientTimeout
 
-from .const import AIO_TIMEOUT, MIELE_API, VERSION
+from .const import AIO_TIMEOUT, VERSION
 
 CONTENT_TYPE = "application/json"
 USER_AGENT_BASE = f"Pymiele/{VERSION}"
@@ -194,7 +194,7 @@ class MieleAPI:
             try:
                 access_token = await self.auth.async_get_access_token()
                 async with self.auth.websession.get(
-                    f"{MIELE_API}/devices/all/events",
+                    f"{self.auth.host}/devices/all/events",
                     timeout=ClientTimeout(total=None, sock_connect=5, sock_read=None),
                     headers={
                         "Accept": "text/event-stream; char-set=utf-8",
