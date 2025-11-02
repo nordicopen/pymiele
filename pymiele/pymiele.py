@@ -108,9 +108,9 @@ class MieleAPI:
         self, serial: str, temperature: float, zone: int = 1
     ) -> ClientResponse:
         """Set target temperature."""
-        temp = round(temperature)
+        data = {"targetTemperature": [{"zone": zone, "value": round(temperature)}]}
+        _LOGGER.debug("set_target_temperature serial: %s, data: %s", serial, data)
         async with asyncio.timeout(AIO_TIMEOUT):
-            data = {"targetTemperature": [{"zone": zone, "value": temp}]}
             res = await self.auth.request(
                 "PUT",
                 f"/devices/{serial}/actions",
@@ -120,8 +120,8 @@ class MieleAPI:
                     "Accept": "application/json",
                 },
             )
+            _LOGGER.debug("set_target_temperature res: %s", res.status)
             res.raise_for_status()
-        _LOGGER.debug("set_target res: %s", res.status)
         return res
 
     async def send_action(
@@ -140,8 +140,8 @@ class MieleAPI:
                     "Accept": "application/json",
                 },
             )
+            _LOGGER.debug("send_action res: %s", res.status)
             res.raise_for_status()
-        _LOGGER.debug("send_action res: %s", res.status)
         return res
 
     async def set_program(
@@ -160,8 +160,8 @@ class MieleAPI:
                     "Accept": "application/json",
                 },
             )
+            _LOGGER.debug("set_program res: %s", res.status)
             res.raise_for_status()
-        _LOGGER.debug("set_program res: %s", res.status)
         return res
 
     async def set_room(
@@ -180,8 +180,8 @@ class MieleAPI:
                     "Accept": "application/json",
                 },
             )
+            _LOGGER.debug("set_room res: %s", res.status)
             res.raise_for_status()
-        _LOGGER.debug("set_room res: %s", res.status)
         return res
 
     async def listen_events(
