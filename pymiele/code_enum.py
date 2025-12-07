@@ -62,7 +62,7 @@ class MieleEnum(IntEnum):
 
         return None
 
-    def __new__(cls, value: int, *values: list[int]) -> Any:
+    def __new__(cls, value: int, *values: int) -> Any:
         """Allow duplicate values."""
         self = int.__new__(cls)
         self._value_ = value
