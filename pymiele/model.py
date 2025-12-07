@@ -824,8 +824,8 @@ class MieleFillingLevels:
     def filling_levels(self) -> dict[str, MieleFillingLevel]:
         """Return fill levels."""
         return {
-            device: MieleFillingLevel(levels["fillingLevels"])
-            for device, levels in self.raw_data.items()
+            item["deviceId"]: MieleFillingLevel(item["fillingLevels"])
+            for item in self.raw_data
         }
 
 
