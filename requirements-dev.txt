@@ -3,7 +3,7 @@ aiohttp
 build
 bump2version==1.0.1
 colorlog==6.10.1
-mypy==1.19.0
+mypy==1.19.1
 pre-commit==4.5.0
 ruff==0.14.7
 setuptools==80.9.0
