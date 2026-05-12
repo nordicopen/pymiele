@@ -11,6 +11,7 @@ import logging
 from typing import Any
 
 from aiohttp import ClientResponse, ClientResponseError, ClientSession, ClientTimeout
+from aiohttp.http_exceptions import TransferEncodingError
 
 from .const import AIO_TIMEOUT, VERSION
 
@@ -243,8 +244,11 @@ class MieleAPI:
                     "JSON decode error: %s, Pos: %s, Doc: %s", ex.msg, ex.pos, ex.doc
                 )
                 await asyncio.sleep(5)
+            except TransferEncodingError as ex:
+                _LOGGER.debug("SSE: %s", ex)
+                await asyncio.sleep(5)
             except Exception as ex:  # pylint: disable=broad-except
-                _LOGGER.error("Listen_event: %s", ex)
+                _LOGGER.error("Listen event: %s", ex)
                 await asyncio.sleep(5)
 
 
