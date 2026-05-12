@@ -15,7 +15,7 @@ classifiers = [
     "Development Status :: 4 - Beta",
 ]
 dependencies = ["aiohttp"]
-requires-python = ">=3.13.0"
+requires-python = ">=3.14.0"
 
 [project.urls]
 Repository = "https://github.com/nordicopen/pymiele"
@@ -28,7 +28,7 @@ version = { attr = "pymiele.const.VERSION" }
 include = ["pymiele*"]
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 strict = true
 
 [tool.ruff]
