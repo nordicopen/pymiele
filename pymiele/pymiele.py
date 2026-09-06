@@ -20,6 +20,8 @@ USER_AGENT_BASE = f"Pymiele/{VERSION}"
 
 _LOGGER = logging.getLogger(__name__)
 
+SUPPORTED_LANGUAGES = ["da", "de", "en", "es", "fr", "it", "nb", "nl"]
+
 
 class MieleAPI:
     """Class to communicate with the Miele API."""
@@ -28,12 +30,19 @@ class MieleAPI:
         """Initialize the API and store the auth so we can make requests."""
         self.auth = auth
 
-    async def get_devices(self, serial: str | None = None) -> dict:
+    async def get_devices(
+        self, serial: str | None = None, language: str | None = None
+    ) -> dict:
         """Get one or all device(s)."""
         serial_str = "" if serial is None else f"/{serial}"
+        if language is not None and language not in SUPPORTED_LANGUAGES:
+            language = None
+        language_str = "" if language is None else f"?language={language}"
         async with asyncio.timeout(AIO_TIMEOUT):
             res = await self.auth.request(
-                "GET", f"/devices{serial_str}", headers={"Accept": "application/json"}
+                "GET",
+                f"/devices{serial_str}{language_str}",
+                headers={"Accept": "application/json"},
             )
             res.raise_for_status()
         return await res.json()
@@ -49,12 +58,15 @@ class MieleAPI:
             res.raise_for_status()
         return await res.json()
 
-    async def get_programs(self, serial: str) -> dict:
+    async def get_programs(self, serial: str, language: str | None = None) -> dict:
         """Get programs for a device."""
+        if language is not None and language not in SUPPORTED_LANGUAGES:
+            language = None
+        language_str = "" if language is None else f"?language={language}"
         async with asyncio.timeout(AIO_TIMEOUT):
             res = await self.auth.request(
                 "GET",
-                f"/devices/{serial}/programs",
+                f"/devices/{serial}/programs{language_str}",
                 headers={"Accept": "application/json"},
             )
             res.raise_for_status()
@@ -71,13 +83,18 @@ class MieleAPI:
             res.raise_for_status()
         return await res.json()
 
-    async def get_filling_levels(self, serial: str | None = None) -> dict:
+    async def get_filling_levels(
+        self, serial: str | None = None, language: str | None = None
+    ) -> dict:
         """Get consumables filling levels for all devices or for a specific device."""
+        if language is not None and language not in SUPPORTED_LANGUAGES:
+            language = None
+        language_str = "" if language is None else f"?language={language}"
         serial_str = "" if serial is None else f"/{serial}"
         async with asyncio.timeout(AIO_TIMEOUT):
             res = await self.auth.request(
                 "GET",
-                f"/devices{serial_str}/fillingLevels",
+                f"/devices{serial_str}/fillingLevels{language_str}",
                 headers={"Accept": "application/json"},
             )
             res.raise_for_status()
