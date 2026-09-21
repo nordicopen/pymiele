@@ -151,7 +151,7 @@ class MieleDevice:
         return ret_val
 
     @property
-    def xkm_tech_type(self) -> str:
+    def xkm_tech_type(self) -> str | None:
         """Return the xkm tech type of the device."""
         try:
             ret_val = self.raw_data["ident"]["xkmIdentLabel"]["techType"]
@@ -195,6 +195,11 @@ class MieleDevice:
         except KeyError:
             ret_val = 0
         return ret_val
+
+    @state_status.setter
+    def state_status(self, new_value: int) -> None:
+        """Set the status of the device."""
+        self.raw_data["state"]["status"]["value_raw"] = new_value
 
     @property
     def state_status_localized(self) -> str:
