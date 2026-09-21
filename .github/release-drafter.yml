@@ -30,6 +30,34 @@ categories:
     collapse-after: 2
     labels:
       - 'dependencies'
+  - type: "version-resolver"
+    semver-increment: "major"
+    when:
+      labels:
+        - "major"
+        - "breaking-change"
+  
+  - type: "version-resolver"
+    semver-increment: "minor"
+    when:
+      labels:
+        - "minor"
+        - "new-feature"
+
+  - type: "version-resolver"
+    semver-increment: "patch"
+    when:
+      labels:
+        - "patch"
+        - "new-feature"
+        - 'bugfix'
+        - 'chore'
+        - 'ci'
+        - 'dependencies'
+        - 'documentation'
+        - 'enhancement'
+        - 'performance'
+        - 'refactor'
 
 autolabeler:
   - label: "maintenance"
@@ -54,27 +82,6 @@ autolabeler:
       - "setup.cfg"
       - "pyproject.toml"
       
-version-resolver:
-  major:
-    labels:
-      - 'major'
-      - 'breaking-change'
-  minor:
-    labels:
-      - 'minor'
-      - 'new-feature'
-  patch:
-    labels:
-      - 'bugfix'
-      - 'chore'
-      - 'ci'
-      - 'dependencies'
-      - 'documentation'
-      - 'enhancement'
-      - 'performance'
-      - 'refactor'
-  default: patch
-
 template: |
   <!--
   ### Checklist for release
