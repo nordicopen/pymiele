@@ -10,7 +10,13 @@ from json.decoder import JSONDecodeError
 import logging
 from typing import Any
 
-from aiohttp import ClientResponse, ClientResponseError, ClientSession, ClientTimeout
+from aiohttp import (
+    ClientPayloadError,
+    ClientResponse,
+    ClientResponseError,
+    ClientSession,
+    ClientTimeout,
+)
 from aiohttp.http_exceptions import TransferEncodingError
 
 from .const import AIO_TIMEOUT, VERSION
@@ -244,7 +250,10 @@ class MieleAPI:
                     "JSON decode error: %s, Pos: %s, Doc: %s", ex.msg, ex.pos, ex.doc
                 )
                 await asyncio.sleep(5)
-            except TransferEncodingError as ex:
+            except (ClientPayloadError, TransferEncodingError) as ex:
+                # aiohttp wraps a stream cut off mid-chunk in ClientPayloadError
+                # ("Response payload is not completed: <TransferEncodingError ...>"),
+                # so the bare TransferEncodingError is rarely seen here.
                 _LOGGER.debug("SSE: %s", ex)
                 await asyncio.sleep(5)
             except Exception as ex:  # pylint: disable=broad-except
