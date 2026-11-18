@@ -191,6 +191,7 @@ class MieleAPI:
         actions_callback: Callable[[dict[str, Any]], Any] | None = None,
     ) -> Callable[[], Coroutine[Any, Any, None]]:
         """Listen to events, apply changes to object and call callback with event."""
+        failures = 0
         while True:
             try:
                 access_token = await self.auth.async_get_access_token()
@@ -203,6 +204,12 @@ class MieleAPI:
                     },
                 ) as resp:
                     # _LOGGER.debug("Starting listening for events: %s", resp.status)
+                    if failures and resp.ok:
+                        _LOGGER.info(
+                            "Event stream reconnected after %s failed attempts",
+                            failures,
+                        )
+                        failures = 0
                     while True:
                         # add 120s timeout for reading event data, ping is every 20s
                         # if ping is not received, then connection must be closed and re-initialized
@@ -248,7 +255,11 @@ class MieleAPI:
                 _LOGGER.debug("SSE: %s", ex)
                 await asyncio.sleep(5)
             except Exception as ex:  # pylint: disable=broad-except
-                _LOGGER.error("Listen event: %s", ex)
+                failures += 1
+                if failures == 1:
+                    _LOGGER.info("Event stream unavailable, retrying: %s", ex)
+                else:
+                    _LOGGER.debug("Listen event: %s", ex)
                 await asyncio.sleep(5)
 
 
